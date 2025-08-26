@@ -20,6 +20,7 @@ func Run(usecase domain.MessageUseCase) {
 	go func() {
 		<-signals
 		log.Info().Msg("Shutting down...")
+		cancel()
 	}()
 
 	messages := make(chan *domain.Message)

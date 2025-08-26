@@ -71,7 +71,6 @@ func TestConfig_DefaultValues(t *testing.T) {
 		assert.Equal(t, "anyker-group", config.KafkaGroupID)
 		assert.Equal(t, "http://localhost:8080/messages", config.APIEndpoint)
 		assert.Equal(t, "anyker-nanobot-1", config.NanobotName)
-		assert.Equal(t, "8080", config.Port)
 	})
 }
 
@@ -100,7 +99,6 @@ func TestConfig_WithEnvironmentVariables(t *testing.T) {
 		assert.Equal(t, "test-group", config.KafkaGroupID)
 		assert.Equal(t, "http://api:8000/test", config.APIEndpoint)
 		assert.Equal(t, "test-nanobot", config.NanobotName)
-		assert.Equal(t, "3000", config.Port)
 	})
 }
 
@@ -125,7 +123,6 @@ func TestConfig_PartialEnvironmentVariables(t *testing.T) {
 		assert.Equal(t, "anyker-group", config.KafkaGroupID)
 		assert.Equal(t, "http://localhost:8080/messages", config.APIEndpoint)
 		assert.Equal(t, "anyker-nanobot-1", config.NanobotName)
-		assert.Equal(t, "9000", config.Port)
 	})
 }
 

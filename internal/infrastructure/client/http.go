@@ -31,10 +31,16 @@ func NewHttpClient(client *http.Client, bearerToken string) HttpClient {
 func (c *HttpClientImpl) Post(payload interface{}, url string) (*http.Response, error) {
 	// TODO: add context
 
-	// Convert payload to JSON
-	jsonPayload, err := json.Marshal(payload)
-	if err != nil {
-		return nil, fmt.Errorf("failed to marshal payload: %w", err)
+	var jsonPayload []byte
+	switch v := payload.(type) {
+	case []byte:
+		jsonPayload = v
+	default:
+		var err error
+		jsonPayload, err = json.Marshal(v)
+		if err != nil {
+			return nil, fmt.Errorf("failed to marshal payload: %w", err)
+		}
 	}
 	log.Debug().Msgf("payload to send: %s", string(jsonPayload))
 	log.Debug().Msgf("url %s", url)

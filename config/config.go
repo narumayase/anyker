@@ -16,7 +16,6 @@ type Config struct {
 	KafkaGroupID string
 	APIEndpoint  string
 	NanobotName  string
-	Port         string
 	LogLevel     string
 }
 
@@ -34,7 +33,6 @@ func Load() Config {
 		KafkaGroupID: getEnv("KAFKA_GROUP_ID", "anyker-group"),
 		APIEndpoint:  getEnv("API_ENDPOINT", "http://localhost:8080/messages"),
 		NanobotName:  getEnv("NANOBOT_NAME", "anyker-nanobot-1"),
-		Port:         getEnv("PORT", "8080"),
 		LogLevel:     getEnv("LOG_LEVEL", "info"),
 	}
 }

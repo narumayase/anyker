@@ -8,6 +8,7 @@ import (
 	"anyker/internal/infrastructure/repository"
 	"github.com/rs/zerolog/log"
 	"net/http"
+	"time"
 )
 
 func main() {
@@ -15,8 +16,11 @@ func main() {
 	cfg := config.Load()
 	log.Info().Str("nanobot_name", cfg.NanobotName).Msg("Starting nanobot")
 
-	// Create http forward client
-	httpClient := &http.Client{}
+	// Create http forward client.
+	// It's a good practice to set a timeout for HTTP clients in production.
+	httpClient := &http.Client{
+		Timeout: 30 * time.Second, // TODO should be an .env variable
+	}
 	forwardHttpClient := client.NewHttpClient(httpClient, "")
 
 	// Create repositories
@@ -26,8 +30,6 @@ func main() {
 	if err != nil {
 		log.Fatal().Err(err).Msg("failed to create consumerRepository")
 	}
-	//defer consumerRepository.Close()
-	//TODO hay que cerrar algo?
 
 	// Create use case
 	messageService := application.NewMessageService(forwardRepository, consumerRepository)
