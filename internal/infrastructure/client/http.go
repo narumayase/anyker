@@ -2,6 +2,7 @@ package client
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/rs/zerolog/log"
@@ -16,11 +17,11 @@ type HttpClientImpl struct {
 
 // HttpClient defines the interface for making HTTP requests
 type HttpClient interface {
-	Post(payload interface{}, url string) (*http.Response, error)
+	Post(ctx context.Context, payload interface{}, url string) (*http.Response, error)
 }
 
 // NewHttpClient creates a new HTTP client with bearer token authentication
-func NewHttpClient(client *http.Client, bearerToken string) HttpClient {
+func NewHttpClient(client *http.client, bearerToken string) HttpClient {
 	return &HttpClientImpl{
 		client:      client,
 		bearerToken: bearerToken,
@@ -28,9 +29,7 @@ func NewHttpClient(client *http.Client, bearerToken string) HttpClient {
 }
 
 // Post sends a POST request with JSON payload and bearer token authentication
-func (c *HttpClientImpl) Post(payload interface{}, url string) (*http.Response, error) {
-	// TODO: add context
-
+func (c *HttpClientImpl) Post(ctx context.Context, payload interface{}, url string) (*http.Response, error) {
 	var jsonPayload []byte
 	switch v := payload.(type) {
 	case []byte:
@@ -45,14 +44,14 @@ func (c *HttpClientImpl) Post(payload interface{}, url string) (*http.Response, 
 	log.Debug().Msgf("payload to send: %s", string(jsonPayload))
 	log.Debug().Msgf("url %s", url)
 
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonPayload))
+	req, err := http.NewRequestWithContext(ctx, "POST", url, bytes.NewBuffer(jsonPayload))
 	if err != nil {
 		return nil, fmt.Errorf("failed to create request: %w", err)
 	}
 
 	// Set headers
 	req.Header.Set("Authorization", "Bearer "+c.bearerToken)
-	// TODO: add content type?
+	req.Header.Set("Content-Type", "application/json")
 
 	// Execute request
 	resp, err := c.client.Do(req)

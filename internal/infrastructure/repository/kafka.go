@@ -58,6 +58,7 @@ func (c *Consumer) Consume(ctx context.Context, messages chan<- *domain.Message)
 	}
 }
 
+// Close closes the Kafka consumer.
 func (c *Consumer) Close() error {
 	return c.consumer.Close()
 }

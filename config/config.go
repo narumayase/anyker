@@ -3,7 +3,9 @@ package config
 import (
 	"log"
 	"os"
+	"strconv"
 	"strings"
+	"time"
 
 	"github.com/joho/godotenv"
 	"github.com/rs/zerolog"
@@ -11,12 +13,13 @@ import (
 
 // Config holds the application configuration.
 type Config struct {
-	KafkaBroker  string
-	KafkaTopic   string
-	KafkaGroupID string
-	APIEndpoint  string
-	NanobotName  string
-	LogLevel     string
+	KafkaBroker       string
+	KafkaTopic        string
+	KafkaGroupID      string
+	APIEndpoint       string
+	NanobotName       string
+	LogLevel          string
+	HTTPClientTimeout time.Duration
 }
 
 // Load loads configuration from environment variables or an .env file
@@ -28,16 +31,27 @@ func Load() Config {
 	setLogLevel()
 
 	return Config{
-		KafkaBroker:  getEnv("KAFKA_BROKER", "localhost:9092"),
-		KafkaTopic:   getEnv("KAFKA_TOPIC", "anyker-topic"),
-		KafkaGroupID: getEnv("KAFKA_GROUP_ID", "anyker-group"),
-		APIEndpoint:  getEnv("API_ENDPOINT", "http://localhost:8080/messages"),
-		NanobotName:  getEnv("NANOBOT_NAME", "anyker-nanobot-1"),
-		LogLevel:     getEnv("LOG_LEVEL", "info"),
+		KafkaBroker:       getEnv("KAFKA_BROKER", "localhost:9092"),
+		KafkaTopic:        getEnv("KAFKA_TOPIC", "anyker-topic"),
+		KafkaGroupID:      getEnv("KAFKA_GROUP_ID", "anyker-group"),
+		APIEndpoint:       getEnv("API_ENDPOINT", "http://localhost:8080/messages"),
+		NanobotName:       getEnv("NANOBOT_NAME", "anyker-nanobot-1"),
+		LogLevel:          getEnv("LOG_LEVEL", "info"),
+		HTTPClientTimeout: getEnvDuration("HTTP_CLIENT_TIMEOUT", 30) * time.Second,
 	}
 }
 
-// getEnv gets an environment variable or returns a default value
+// getEnvDuration gets an environment variable as a time.Duration in seconds or returns a default value.
+func getEnvDuration(key string, defaultValue time.Duration) time.Duration {
+	if valueStr := os.Getenv(key); valueStr != "" {
+		if value, err := strconv.Atoi(valueStr); err == nil {
+			return time.Duration(value)
+		}
+	}
+	return defaultValue
+}
+
+// getEnv gets an environment variable or returns a default value.
 func getEnv(key, defaultValue string) string {
 	if value := os.Getenv(key); value != "" {
 		return value
@@ -45,7 +59,7 @@ func getEnv(key, defaultValue string) string {
 	return defaultValue
 }
 
-// setLogLevel sets the log level defined in LOG_LEVEL environment variable
+// setLogLevel sets the global log level based on the LOG_LEVEL environment variable.
 func setLogLevel() {
 	levels := map[string]zerolog.Level{
 		"debug": zerolog.DebugLevel,

@@ -9,6 +9,8 @@ import (
 	"syscall"
 )
 
+// Run starts the worker, which consumes messages from Kafka and forwards them.
+// It also handles graceful shutdown on SIGINT or SIGTERM signals.
 func Run(usecase domain.MessageUseCase) {
 	// consume messages
 	ctx, cancel := context.WithCancel(context.Background())

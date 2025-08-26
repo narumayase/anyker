@@ -8,7 +8,6 @@ import (
 	"anyker/internal/infrastructure/repository"
 	"github.com/rs/zerolog/log"
 	"net/http"
-	"time"
 )
 
 func main() {
@@ -19,7 +18,7 @@ func main() {
 	// Create http forward client.
 	// It's a good practice to set a timeout for HTTP clients in production.
 	httpClient := &http.Client{
-		Timeout: 30 * time.Second, // TODO should be an .env variable
+		Timeout: cfg.HTTPClientTimeout,
 	}
 	forwardHttpClient := client.NewHttpClient(httpClient, "")
 

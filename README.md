@@ -1,6 +1,7 @@
-# Anyker
+# anyker - queue consumer 
 
 This project provides a worker/nanobot that consumes messages from a Kafka topic and forwards them to a configured API endpoint.
+Note: the messages should be json.
 
 ### FEATURES
 
@@ -12,7 +13,6 @@ This project provides a worker/nanobot that consumes messages from a Kafka topic
 
 *   Go 1.21 or higher
 *   Kafka Broker
-*   Docker (optional)
 
 ### 🚀 INSTALLATION
 
@@ -42,10 +42,7 @@ Create a `.env` file based on `env.example`:
 *   `API_ENDPOINT`: API endpoint to forward messages to.
 *   `NANOBOT_NAME`: Name of the nanobot instance.
 *   `LOG_LEVEL`: Log level (`debug`, `info`, `warn`, `error`, `fatal`, `panic` - default: `info`)
-
-### 📡 ENDPOINTS
-
-This project does not expose any endpoints. It consumes messages from a Kafka topic and forwards them to a configured API endpoint.
+*   `HTTP_CLIENT_TIMEOUT`: HTTP client timeout in seconds (default: 30)
 
 ### 🎗️ ARCHITECTURE
 
@@ -61,13 +58,13 @@ This project follows Clean Architecture principles:
 ```
 anyker/
 ├── cmd/                  # Application entry points
-│   └── root.go           # Main command
+├── config/               # Configuration
 ├── internal/             # Project-specific code
 │   ├── application/      # Use cases
-│   ├── config/           # Configuration
 │   ├── domain/           # Domain entities and interfaces
 │   └── infrastructure/   # Repository implementations
 │       ├── client/       # HTTP client
+│       │   └── mocks/
 │       └── repository/   # Kafka consumer
 ├── main.go               # Main entry point
 ├── go.mod                # Go dependencies
@@ -118,11 +115,6 @@ go tool cover -func=coverage.out | grep -v "mocks"
 
 ### BACKLOG
 
-*   Unit Tests
-*   Integration tests
-*   Add more message brokers (e.g., RabbitMQ, NATS)
-*   API documentation with Swagger
-
-### ABOUT
-
-A worker/nanobot that consumes messages from a Kafka topic and forwards them to a configured API endpoint.
+[ ] Unit Tests
+[ ] Integration tests
+[ ] Add more message brokers (e.g., RabbitMQ, NATS)

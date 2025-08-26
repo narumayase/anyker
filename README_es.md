@@ -1,4 +1,4 @@
-# Anyker
+# anyker - queue consumer
 
 Este proyecto proporciona un worker/nanobot que consume mensajes de un tópico de Kafka y los reenvía a un endpoint de API configurado.
 
@@ -12,7 +12,6 @@ Este proyecto proporciona un worker/nanobot que consume mensajes de un tópico d
 
 *   Go 1.21 o superior
 *   Kafka Broker
-*   Docker (opcional)
 
 ### 🚀 INSTALACIÓN
 
@@ -42,10 +41,7 @@ Crea un archivo `.env` basado en `env.example`:
 *   `API_ENDPOINT`: Endpoint de la API a la que reenviar los mensajes.
 *   `NANOBOT_NAME`: Nombre de la instancia del nanobot.
 *   `LOG_LEVEL`: Nivel de log (`debug`, `info`, `warn`, `error`, `fatal`, `panic` - por defecto: `info`)
-
-### 📡 ENDPOINTS
-
-Este proyecto no expone ningún endpoint. Consume mensajes de un tópico de Kafka y los reenvía a un endpoint de API configurado.
+*   `HTTP_CLIENT_TIMEOUT`: Timeout del cliente HTTP en segundos (por defecto: 30)
 
 ### 🎗️ ARQUITECTURA
 
@@ -61,18 +57,17 @@ Este proyecto sigue los principios de Clean Architecture:
 ```
 anyker/
 ├── cmd/                  # Puntos de entrada de la aplicación
-│   └── root.go           # Comando principal
+├── config/               # Configuración
 ├── internal/             # Código específico del proyecto
 │   ├── application/      # Casos de uso
-│   ├── config/           # Configuración
 │   ├── domain/           # Entidades e interfaces de dominio
 │   └── infrastructure/   # Implementaciones de repositorios
 │       ├── client/       # Cliente HTTP
 │       └── repository/   # Consumidor de Kafka
 ├── main.go               # Punto de entrada principal
 ├── go.mod                # Dependencias de Go
-├── README_es.md          # README en español
-└── README.md             # Este archivo
+├── README_es.md          # Este archivo
+└── README.md             # README en ingleś
 ```
 
 ### 🧪 PRUEBAS
@@ -83,18 +78,6 @@ Para ejecutar todas las pruebas:
 
 ```sh
 go test ./...
-```
-
-Para ejecutar las pruebas con salida detallada:
-
-```sh
-go test -v ./...
-```
-
-Para ejecutar las pruebas de un paquete específico:
-
-```sh
-go test ./internal/config/
 ```
 
 #### COBERTURA DE PRUEBAS
@@ -118,11 +101,6 @@ go tool cover -func=coverage.out | grep -v "mocks"
 
 ### BACKLOG
 
-*   Pruebas unitarias
-*   Pruebas de integración
-*   Añadir más brokers de mensajería (por ejemplo, RabbitMQ, NATS)
-*   Documentación de la API con Swagger
-
-### ACERCA DE
-
-Un worker/nanobot que consume mensajes de un tópico de Kafka y los reenvía a un endpoint de API configurado.
+[ ] Pruebas unitarias
+[ ] Pruebas de integración
+[ ] Añadir más brokers de mensajería (por ejemplo, RabbitMQ, NATS)

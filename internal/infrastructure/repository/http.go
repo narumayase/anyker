@@ -10,11 +10,13 @@ import (
 	"net/http"
 )
 
+// ForwardRepositoryImpl implements the domain.ForwardRepository interface using an HTTP client.
 type ForwardRepositoryImpl struct {
 	config     config.Config
 	httpClient client.HttpClient
 }
 
+// NewForwardRepository creates a new ForwardRepositoryImpl.
 func NewForwardRepository(
 	config config.Config,
 	httpClient client.HttpClient) domain.ForwardRepository {
@@ -26,7 +28,7 @@ func NewForwardRepository(
 
 // Forward forwards a message to the configured API endpoint.
 func (f *ForwardRepositoryImpl) Forward(ctx context.Context, message *domain.Message) error {
-	resp, err := f.httpClient.Post(message.Content, f.config.APIEndpoint)
+	resp, err := f.httpClient.Post(ctx, message.Content, f.config.APIEndpoint)
 	if err != nil {
 		return err
 	}
