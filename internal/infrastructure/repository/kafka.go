@@ -4,14 +4,22 @@ import (
 	"anyker/config"
 	"context"
 	"fmt"
+	"time"
 
 	"anyker/internal/domain"
 	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 )
 
+// KafkaConsumer defines the interface for the Kafka consumer, to allow for mocking.
+type KafkaConsumer interface {
+	Subscribe(topic string, rebalanceCb kafka.RebalanceCb) error
+	ReadMessage(timeout time.Duration) (*kafka.Message, error)
+	Close() error
+}
+
 // Consumer is a Kafka consumer that implements the ConsumerRepository interface.
 type Consumer struct {
-	consumer *kafka.Consumer
+	consumer KafkaConsumer
 	topic    string
 }
 
@@ -46,9 +54,9 @@ func (c *Consumer) Consume(ctx context.Context, messages chan<- *domain.Message)
 		case <-ctx.Done():
 			return nil
 		default:
-			msg, err := c.consumer.ReadMessage(1000)
+			msg, err := c.consumer.ReadMessage(1000 * time.Millisecond)
 			if err != nil {
-				if err.(kafka.Error).Code() == kafka.ErrTimedOut {
+				if kafkaErr, ok := err.(kafka.Error); ok && kafkaErr.Code() == kafka.ErrTimedOut {
 					continue
 				}
 				return fmt.Errorf("failed to read message: %w", err)

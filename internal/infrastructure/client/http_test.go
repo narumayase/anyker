@@ -1,7 +1,10 @@
 package client
 
 import (
+	"context"
+	"io/ioutil"
 	"net/http"
+	"net/http/httptest"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -64,4 +67,68 @@ func TestHttpClientImpl_Structure(t *testing.T) {
 	assert.Equal(t, httpClient, clientImpl.client)
 	assert.Equal(t, bearerToken, clientImpl.bearerToken)
 	assert.NotEmpty(t, clientImpl.bearerToken)
+}
+
+func TestHttpClientImpl_Post(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			assert.Equal(t, "POST", r.Method)
+			assert.Equal(t, "Bearer test-token", r.Header.Get("Authorization"))
+			assert.Equal(t, "application/json", r.Header.Get("Content-Type"))
+
+			body, err := ioutil.ReadAll(r.Body)
+			assert.NoError(t, err)
+			assert.JSONEq(t, `{"key":"value"}`, string(body))
+
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write([]byte(`{"status":"ok"}`))
+		}))
+		defer server.Close()
+
+		client := NewHttpClient(server.Client(), "test-token")
+		payload := map[string]string{"key": "value"}
+
+		resp, err := client.Post(context.Background(), payload, server.URL)
+
+		assert.NoError(t, err)
+		assert.Equal(t, http.StatusOK, resp.StatusCode)
+
+		respBody, err := ioutil.ReadAll(resp.Body)
+		assert.NoError(t, err)
+		assert.JSONEq(t, `{"status":"ok"}`, string(respBody))
+	})
+
+	t.Run("server error", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusInternalServerError)
+		}))
+		defer server.Close()
+
+		client := NewHttpClient(server.Client(), "test-token")
+		payload := map[string]string{"key": "value"}
+
+		resp, err := client.Post(context.Background(), payload, server.URL)
+
+		assert.NoError(t, err)
+		assert.Equal(t, http.StatusInternalServerError, resp.StatusCode)
+	})
+
+	t.Run("invalid url", func(t *testing.T) {
+		client := NewHttpClient(&http.Client{}, "test-token")
+		payload := map[string]string{"key": "value"}
+
+		_, err := client.Post(context.Background(), payload, "invalid-url")
+
+		assert.Error(t, err)
+	})
+
+	t.Run("payload marshal error", func(t *testing.T) {
+		client := NewHttpClient(&http.Client{}, "test-token")
+		payload := make(chan int) // Invalid payload for JSON marshaling
+
+		_, err := client.Post(context.Background(), payload, "http://localhost")
+
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "failed to marshal payload")
+	})
 }
