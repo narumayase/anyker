@@ -105,6 +105,6 @@ go tool cover -func=coverage.out | grep -v "mocks"
 
 ### BACKLOG
 
-[ ] Pruebas unitarias
-[ ] Pruebas de integración
-[ ] Añadir más brokers de mensajería (por ejemplo, RabbitMQ, NATS)
+- [ ] Pruebas unitarias
+- [ ] Pruebas de integración
+- [ ] Añadir más brokers de mensajería (por ejemplo, RabbitMQ, NATS)

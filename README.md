@@ -118,6 +118,6 @@ go tool cover -func=coverage.out | grep -v "mocks"
 
 ### BACKLOG
 
-[ ] Unit Tests
-[ ] Integration tests
-[ ] Add more message brokers (e.g., RabbitMQ, NATS)
+- [ ] Unit Tests
+- [ ] Integration tests
+- [ ] Add more message brokers (e.g., RabbitMQ, NATS)
