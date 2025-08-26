@@ -2,6 +2,10 @@
 
 Este proyecto proporciona un worker/nanobot que consume mensajes de un tópico de Kafka y los reenvía a un endpoint de API configurado.
 
+**Formato de los Mensajes**
+
+Se espera que los mensajes consumidos del tópico de Kafka estén en formato JSON. El worker reenviará el contenido JSON crudo al endpoint de la API configurado.
+
 ### CARACTERÍSTICAS
 
 *   Consume mensajes de un tópico de Kafka.

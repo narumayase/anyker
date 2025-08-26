@@ -1,7 +1,10 @@
 # anyker - queue consumer 
 
 This project provides a worker/nanobot that consumes messages from a Kafka topic and forwards them to a configured API endpoint.
-Note: the messages should be json.
+
+**Message Format**
+
+The messages consumed from the Kafka topic are expected to be in JSON format. The worker forwards the raw JSON content to the configured API endpoint.
 
 ### FEATURES
 

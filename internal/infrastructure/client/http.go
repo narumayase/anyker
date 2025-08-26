@@ -21,7 +21,7 @@ type HttpClient interface {
 }
 
 // NewHttpClient creates a new HTTP client with bearer token authentication
-func NewHttpClient(client *http.client, bearerToken string) HttpClient {
+func NewHttpClient(client *http.Client, bearerToken string) HttpClient {
 	return &HttpClientImpl{
 		client:      client,
 		bearerToken: bearerToken,

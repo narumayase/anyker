@@ -3,6 +3,7 @@ package config
 import (
 	"os"
 	"testing"
+	"time"
 
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/assert"
@@ -58,7 +59,7 @@ func TestGetEnv(t *testing.T) {
 
 func TestConfig_DefaultValues(t *testing.T) {
 	// Clean up environment variables
-	envVars := []string{"KAFKA_BROKER", "KAFKA_TOPIC", "KAFKA_GROUP_ID", "API_ENDPOINT", "NANOBOT_NAME", "PORT"}
+	envVars := []string{"KAFKA_BROKER", "KAFKA_TOPIC", "KAFKA_GROUP_ID", "API_ENDPOINT", "NANOBOT_NAME", "HTTP_CLIENT_TIMEOUT_SECONDS"}
 	for _, env := range envVars {
 		os.Unsetenv(env)
 	}
@@ -71,18 +72,19 @@ func TestConfig_DefaultValues(t *testing.T) {
 		assert.Equal(t, "anyker-group", config.KafkaGroupID)
 		assert.Equal(t, "http://localhost:8080/messages", config.APIEndpoint)
 		assert.Equal(t, "anyker-nanobot-1", config.NanobotName)
+		assert.Equal(t, 30*time.Second, config.HTTPClientTimeout)
 	})
 }
 
 func TestConfig_WithEnvironmentVariables(t *testing.T) {
 	// Set test environment variables
 	testEnvVars := map[string]string{
-		"KAFKA_BROKER":   "kafka:9092",
-		"KAFKA_TOPIC":    "test-topic",
-		"KAFKA_GROUP_ID": "test-group",
-		"API_ENDPOINT":   "http://api:8000/test",
-		"NANOBOT_NAME":   "test-nanobot",
-		"PORT":           "3000",
+		"KAFKA_BROKER":                "kafka:9092",
+		"KAFKA_TOPIC":                 "test-topic",
+		"KAFKA_GROUP_ID":              "test-group",
+		"API_ENDPOINT":                "http://api:8000/test",
+		"NANOBOT_NAME":                "test-nanobot",
+		"HTTP_CLIENT_TIMEOUT_SECONDS": "60",
 	}
 
 	// Set environment variables
@@ -99,21 +101,22 @@ func TestConfig_WithEnvironmentVariables(t *testing.T) {
 		assert.Equal(t, "test-group", config.KafkaGroupID)
 		assert.Equal(t, "http://api:8000/test", config.APIEndpoint)
 		assert.Equal(t, "test-nanobot", config.NanobotName)
+		assert.Equal(t, 60*time.Second, config.HTTPClientTimeout)
 	})
 }
 
 func TestConfig_PartialEnvironmentVariables(t *testing.T) {
 	// Clean up all environment variables first
-	envVars := []string{"KAFKA_BROKER", "KAFKA_TOPIC", "KAFKA_GROUP_ID", "API_ENDPOINT", "NANOBOT_NAME", "PORT"}
+	envVars := []string{"KAFKA_BROKER", "KAFKA_TOPIC", "KAFKA_GROUP_ID", "API_ENDPOINT", "NANOBOT_NAME", "HTTP_CLIENT_TIMEOUT_SECONDS"}
 	for _, env := range envVars {
 		os.Unsetenv(env)
 	}
 
 	// Set only some environment variables
 	os.Setenv("KAFKA_BROKER", "kafka-partial:9092")
-	os.Setenv("PORT", "9000")
+	os.Setenv("HTTP_CLIENT_TIMEOUT_SECONDS", "10")
 	defer os.Unsetenv("KAFKA_BROKER")
-	defer os.Unsetenv("PORT")
+	defer os.Unsetenv("HTTP_CLIENT_TIMEOUT_SECONDS")
 
 	t.Run("config with partial environment variables", func(t *testing.T) {
 		config := Load()
@@ -123,6 +126,7 @@ func TestConfig_PartialEnvironmentVariables(t *testing.T) {
 		assert.Equal(t, "anyker-group", config.KafkaGroupID)
 		assert.Equal(t, "http://localhost:8080/messages", config.APIEndpoint)
 		assert.Equal(t, "anyker-nanobot-1", config.NanobotName)
+		assert.Equal(t, 10*time.Second, config.HTTPClientTimeout)
 	})
 }
 

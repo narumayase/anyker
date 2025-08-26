@@ -37,15 +37,15 @@ func Load() Config {
 		APIEndpoint:       getEnv("API_ENDPOINT", "http://localhost:8080/messages"),
 		NanobotName:       getEnv("NANOBOT_NAME", "anyker-nanobot-1"),
 		LogLevel:          getEnv("LOG_LEVEL", "info"),
-		HTTPClientTimeout: getEnvDuration("HTTP_CLIENT_TIMEOUT", 30) * time.Second,
+		HTTPClientTimeout: time.Duration(getEnvInt("HTTP_CLIENT_TIMEOUT_SECONDS", 30)) * time.Second,
 	}
 }
 
-// getEnvDuration gets an environment variable as a time.Duration in seconds or returns a default value.
-func getEnvDuration(key string, defaultValue time.Duration) time.Duration {
+// getEnvInt gets an environment variable as an integer or returns a default value.
+func getEnvInt(key string, defaultValue int) int {
 	if valueStr := os.Getenv(key); valueStr != "" {
 		if value, err := strconv.Atoi(valueStr); err == nil {
-			return time.Duration(value)
+			return value
 		}
 	}
 	return defaultValue
