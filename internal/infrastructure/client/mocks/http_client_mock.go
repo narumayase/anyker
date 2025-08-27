@@ -15,7 +15,7 @@ type MockHTTPClient struct {
 }
 
 func (m *MockHTTPClient) Post(ctx context.Context, headers map[string]string, payload interface{}, url string) (*http.Response, error) {
-	args := m.Called(ctx, payload, url)
+	args := m.Called(ctx, headers, payload, url)
 	if args.Get(0) == nil {
 		return nil, args.Error(1)
 	}

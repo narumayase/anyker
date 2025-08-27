@@ -59,7 +59,7 @@ func TestGetEnv(t *testing.T) {
 
 func TestConfig_DefaultValues(t *testing.T) {
 	// Clean up environment variables
-	envVars := []string{"KAFKA_BROKER", "KAFKA_TOPIC", "KAFKA_GROUP_ID", "API_ENDPOINT", "NANOBOT_NAME", "HTTP_CLIENT_TIMEOUT_SECONDS"}
+	envVars := []string{"KAFKA_BROKER", "KAFKA_TOPIC", "KAFKA_GROUP_ID", "API_ENDPOINT", "NANOBOT_NAME", "HTTP_CLIENT_TIMEOUT"}
 	for _, env := range envVars {
 		os.Unsetenv(env)
 	}
@@ -79,12 +79,12 @@ func TestConfig_DefaultValues(t *testing.T) {
 func TestConfig_WithEnvironmentVariables(t *testing.T) {
 	// Set test environment variables
 	testEnvVars := map[string]string{
-		"KAFKA_BROKER":                "kafka:9092",
-		"KAFKA_TOPIC":                 "test-topic",
-		"KAFKA_GROUP_ID":              "test-group",
-		"API_ENDPOINT":                "http://api:8000/test",
-		"NANOBOT_NAME":                "test-nanobot",
-		"HTTP_CLIENT_TIMEOUT_SECONDS": "60",
+		"KAFKA_BROKER":        "kafka:9092",
+		"KAFKA_TOPIC":         "test-topic",
+		"KAFKA_GROUP_ID":      "test-group",
+		"API_ENDPOINT":        "http://api:8000/test",
+		"NANOBOT_NAME":        "test-nanobot",
+		"HTTP_CLIENT_TIMEOUT": "60",
 	}
 
 	// Set environment variables
@@ -107,16 +107,16 @@ func TestConfig_WithEnvironmentVariables(t *testing.T) {
 
 func TestConfig_PartialEnvironmentVariables(t *testing.T) {
 	// Clean up all environment variables first
-	envVars := []string{"KAFKA_BROKER", "KAFKA_TOPIC", "KAFKA_GROUP_ID", "API_ENDPOINT", "NANOBOT_NAME", "HTTP_CLIENT_TIMEOUT_SECONDS"}
+	envVars := []string{"KAFKA_BROKER", "KAFKA_TOPIC", "KAFKA_GROUP_ID", "API_ENDPOINT", "NANOBOT_NAME", "HTTP_CLIENT_TIMEOUT"}
 	for _, env := range envVars {
 		os.Unsetenv(env)
 	}
 
 	// Set only some environment variables
 	os.Setenv("KAFKA_BROKER", "kafka-partial:9092")
-	os.Setenv("HTTP_CLIENT_TIMEOUT_SECONDS", "10")
+	os.Setenv("HTTP_CLIENT_TIMEOUT", "10")
 	defer os.Unsetenv("KAFKA_BROKER")
-	defer os.Unsetenv("HTTP_CLIENT_TIMEOUT_SECONDS")
+	defer os.Unsetenv("HTTP_CLIENT_TIMEOUT")
 
 	t.Run("config with partial environment variables", func(t *testing.T) {
 		config := Load()

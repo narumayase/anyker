@@ -3,6 +3,7 @@ package repository
 import (
 	"anyker/config"
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -60,6 +61,9 @@ func (c *Consumer) Consume(ctx context.Context, messages chan<- *domain.Message)
 			if err != nil {
 				if kafkaErr, ok := err.(kafka.Error); ok && kafkaErr.Code() == kafka.ErrTimedOut {
 					continue
+				}
+				if errors.Is(err, context.Canceled) {
+					return nil // Graceful exit on context cancellation
 				}
 				return fmt.Errorf("failed to read message: %w", err)
 			}

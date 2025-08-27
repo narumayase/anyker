@@ -46,6 +46,7 @@ Create a `.env` file based on `env.example`:
 *   `NANOBOT_NAME`: Name of the nanobot instance.
 *   `LOG_LEVEL`: Log level (`debug`, `info`, `warn`, `error`, `fatal`, `panic` - default: `info`)
 *   `HTTP_CLIENT_TIMEOUT`: HTTP client timeout in seconds (default: 30)
+*   `ORIGIN`: Origin of the messages (e.g., `telegram`, `whatsapp` - default: `telegram`)
 
 ### 🎗️ ARCHITECTURE
 

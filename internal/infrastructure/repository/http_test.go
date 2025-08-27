@@ -10,6 +10,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 )
 
 func TestForwardRepositoryImpl_Forward(t *testing.T) {
@@ -22,7 +23,7 @@ func TestForwardRepositoryImpl_Forward(t *testing.T) {
 
 	t.Run("success", func(t *testing.T) {
 		mockResponse := clientmocks.CreateMockResponse(http.StatusOK, `{"status":"ok"}`)
-		mockHTTPClient.On("Post", ctx, msg.Content, cfg.APIEndpoint).Return(mockResponse, nil).Once()
+		mockHTTPClient.On("Post", ctx, mock.AnythingOfType("map[string]string"), msg.Content, cfg.APIEndpoint).Return(mockResponse, nil).Once()
 
 		err := repo.Forward(ctx, msg)
 
@@ -32,7 +33,7 @@ func TestForwardRepositoryImpl_Forward(t *testing.T) {
 
 	t.Run("http client error", func(t *testing.T) {
 		expectedErr := errors.New("http client error")
-		mockHTTPClient.On("Post", ctx, msg.Content, cfg.APIEndpoint).Return(nil, expectedErr).Once()
+		mockHTTPClient.On("Post", ctx, mock.AnythingOfType("map[string]string"), msg.Content, cfg.APIEndpoint).Return(nil, expectedErr).Once()
 
 		err := repo.Forward(ctx, msg)
 
@@ -43,12 +44,27 @@ func TestForwardRepositoryImpl_Forward(t *testing.T) {
 
 	t.Run("unexpected status code", func(t *testing.T) {
 		mockResponse := clientmocks.CreateMockResponse(http.StatusInternalServerError, `{"error":"internal server error"}`)
-		mockHTTPClient.On("Post", ctx, msg.Content, cfg.APIEndpoint).Return(mockResponse, nil).Once()
+		mockHTTPClient.On("Post", ctx, mock.AnythingOfType("map[string]string"), msg.Content, cfg.APIEndpoint).Return(mockResponse, nil).Once()
 
 		err := repo.Forward(ctx, msg)
 
 		assert.Error(t, err)
 		assert.Contains(t, err.Error(), "unexpected status code: 500")
+		mockHTTPClient.AssertExpectations(t)
+	})
+
+	t.Run("success with correlation ID header", func(t *testing.T) {
+		correlationID := "test-correlation-id"
+		msgWithHeader := domain.Message{
+			Content: []byte(`{"key":"value"}`),
+			Headers: map[string][]byte{"correlation_id": []byte(correlationID)},
+		}
+		mockResponse := clientmocks.CreateMockResponse(http.StatusOK, `{"status":"ok"}`)
+		mockHTTPClient.On("Post", ctx, mock.MatchedBy(func(h map[string]string) bool { return h["X-Correlation-ID"] == correlationID }), msgWithHeader.Content, cfg.APIEndpoint).Return(mockResponse, nil).Once()
+
+		err := repo.Forward(ctx, msgWithHeader)
+
+		assert.NoError(t, err)
 		mockHTTPClient.AssertExpectations(t)
 	})
 }

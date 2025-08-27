@@ -46,6 +46,7 @@ Crea un archivo `.env` basado en `env.example`:
 *   `NANOBOT_NAME`: Nombre de la instancia del nanobot.
 *   `LOG_LEVEL`: Nivel de log (`debug`, `info`, `warn`, `error`, `fatal`, `panic` - por defecto: `info`)
 *   `HTTP_CLIENT_TIMEOUT`: Timeout del cliente HTTP en segundos (por defecto: 30)
+*   `ORIGIN`: Origen de los mensajes (por ejemplo, `telegram`, `whatsapp` - por defecto: `telegram`)
 
 ### 🎗️ ARQUITECTURA
 
@@ -67,7 +68,9 @@ anyker/
 │   ├── domain/           # Entidades e interfaces de dominio
 │   └── infrastructure/   # Implementaciones de repositorios
 │       ├── client/       # Cliente HTTP
+│       │   └── mocks/
 │       └── repository/   # Consumidor de Kafka
+│           └── mocks/
 ├── main.go               # Punto de entrada principal
 ├── go.mod                # Dependencias de Go
 ├── README_es.md          # Este archivo
