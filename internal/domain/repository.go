@@ -14,5 +14,5 @@ type ConsumerRepository interface {
 // ForwardRepository defines the interface for forwarding messages.
 type ForwardRepository interface {
 	// Forward forwards a message to a downstream service.
-	Forward(ctx context.Context, message *Message) error
+	Forward(ctx context.Context, message Message) error
 }

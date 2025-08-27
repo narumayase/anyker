@@ -27,8 +27,11 @@ func NewForwardRepository(
 }
 
 // Forward forwards a message to the configured API endpoint.
-func (f *ForwardRepositoryImpl) Forward(ctx context.Context, message *domain.Message) error {
-	resp, err := f.httpClient.Post(ctx, message.Content, f.config.APIEndpoint)
+func (f *ForwardRepositoryImpl) Forward(ctx context.Context, message domain.Message) error {
+	headers := map[string]string{
+		"X-Correlation-ID": string(message.Headers["correlation_id"]),
+	}
+	resp, err := f.httpClient.Post(ctx, headers, message.Content, f.config.APIEndpoint)
 	if err != nil {
 		return err
 	}

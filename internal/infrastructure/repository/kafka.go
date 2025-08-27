@@ -28,7 +28,9 @@ func NewConsumer(config config.Config) (domain.ConsumerRepository, error) {
 	c, err := kafka.NewConsumer(&kafka.ConfigMap{
 		"bootstrap.servers": config.KafkaBroker,
 		"group.id":          config.KafkaGroupID,
-		"auto.offset.reset": "earliest",
+		"auto.offset.reset": "latest",
+		// latest para ignorar los mensajes viejos, earliest para lo contrario
+		// TODO parametrizar el offset
 	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to create consumer: %w", err)
@@ -61,7 +63,17 @@ func (c *Consumer) Consume(ctx context.Context, messages chan<- *domain.Message)
 				}
 				return fmt.Errorf("failed to read message: %w", err)
 			}
-			messages <- &domain.Message{Content: msg.Value}
+			headers := make(map[string][]byte)
+			if msg.Headers != nil {
+				for _, h := range msg.Headers {
+					headers[h.Key] = h.Value
+				}
+			}
+			messages <- &domain.Message{
+				Content: msg.Value,
+				Headers: headers,
+				Key:     string(msg.Key),
+			}
 		}
 	}
 }

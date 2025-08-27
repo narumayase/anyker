@@ -13,12 +13,15 @@ import (
 
 // Config holds the application configuration.
 type Config struct {
-	KafkaBroker       string
-	KafkaTopic        string
-	KafkaGroupID      string
+	LogLevel string
+
+	KafkaBroker  string
+	KafkaTopic   string
+	KafkaGroupID string
+
+	Origin            string
 	APIEndpoint       string
 	NanobotName       string
-	LogLevel          string
 	HTTPClientTimeout time.Duration
 }
 

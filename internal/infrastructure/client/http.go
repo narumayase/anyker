@@ -17,7 +17,7 @@ type HttpClientImpl struct {
 
 // HttpClient defines the interface for making HTTP requests
 type HttpClient interface {
-	Post(ctx context.Context, payload interface{}, url string) (*http.Response, error)
+	Post(ctx context.Context, headers map[string]string, payload interface{}, url string) (*http.Response, error)
 }
 
 // NewHttpClient creates a new HTTP client with bearer token authentication
@@ -29,7 +29,7 @@ func NewHttpClient(client *http.Client, bearerToken string) HttpClient {
 }
 
 // Post sends a POST request with JSON payload and bearer token authentication
-func (c *HttpClientImpl) Post(ctx context.Context, payload interface{}, url string) (*http.Response, error) {
+func (c *HttpClientImpl) Post(ctx context.Context, headers map[string]string, payload interface{}, url string) (*http.Response, error) {
 	var jsonPayload []byte
 	switch v := payload.(type) {
 	case []byte:
@@ -48,8 +48,10 @@ func (c *HttpClientImpl) Post(ctx context.Context, payload interface{}, url stri
 	if err != nil {
 		return nil, fmt.Errorf("failed to create request: %w", err)
 	}
-
-	// Set headers
+	for key, value := range headers {
+		// Set headers
+		req.Header.Set(key, value)
+	}
 	req.Header.Set("Authorization", "Bearer "+c.bearerToken)
 	req.Header.Set("Content-Type", "application/json")
 
