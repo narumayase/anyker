@@ -29,10 +29,14 @@ func NewMessageService(
 
 // Forward forwards a message using the forward repository.
 func (u *MessageUsecase) Forward(ctx context.Context, message domain.Message) error {
-	origin, _ := u.getOriginAndRoutingID(message.Key)
-	if u.config.Origin != origin {
-		log.Debug().Msgf("message origin: %s discarded", origin)
-		return nil
+	if u.config.Origin == "" {
+		log.Debug().Msg("all messages will be read")
+	} else {
+		origin, _ := u.getOriginAndRoutingID(message.Key)
+		if u.config.Origin != origin {
+			log.Debug().Msgf("message origin: %s discarded", origin)
+			return nil
+		}
 	}
 	return u.forwardRepository.Forward(ctx, message)
 }
