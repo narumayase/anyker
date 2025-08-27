@@ -87,8 +87,9 @@ func TestHttpClientImpl_Post(t *testing.T) {
 
 		client := NewHttpClient(server.Client(), "test-token")
 		payload := map[string]string{"key": "value"}
+		headers := map[string]string{"Content-Type": "application/json"}
 
-		resp, err := client.Post(context.Background(), payload, server.URL)
+		resp, err := client.Post(context.Background(), headers, payload, server.URL)
 
 		assert.NoError(t, err)
 		assert.Equal(t, http.StatusOK, resp.StatusCode)
@@ -106,8 +107,9 @@ func TestHttpClientImpl_Post(t *testing.T) {
 
 		client := NewHttpClient(server.Client(), "test-token")
 		payload := map[string]string{"key": "value"}
+		headers := map[string]string{"Content-Type": "application/json"}
 
-		resp, err := client.Post(context.Background(), payload, server.URL)
+		resp, err := client.Post(context.Background(), headers, payload, server.URL)
 
 		assert.NoError(t, err)
 		assert.Equal(t, http.StatusInternalServerError, resp.StatusCode)
@@ -116,8 +118,9 @@ func TestHttpClientImpl_Post(t *testing.T) {
 	t.Run("invalid url", func(t *testing.T) {
 		client := NewHttpClient(&http.Client{}, "test-token")
 		payload := map[string]string{"key": "value"}
+		headers := map[string]string{"Content-Type": "application/json"}
 
-		_, err := client.Post(context.Background(), payload, "invalid-url")
+		_, err := client.Post(context.Background(), headers, payload, "invalid-url")
 
 		assert.Error(t, err)
 	})
@@ -126,7 +129,9 @@ func TestHttpClientImpl_Post(t *testing.T) {
 		client := NewHttpClient(&http.Client{}, "test-token")
 		payload := make(chan int) // Invalid payload for JSON marshaling
 
-		_, err := client.Post(context.Background(), payload, "http://localhost")
+		headers := map[string]string{"Content-Type": "application/json"}
+
+		_, err := client.Post(context.Background(), headers, payload, "http://localhost")
 
 		assert.Error(t, err)
 		assert.Contains(t, err.Error(), "failed to marshal payload")

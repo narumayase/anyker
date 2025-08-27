@@ -38,7 +38,7 @@ func Run(usecase domain.MessageUseCase) {
 
 	// forward messages
 	for message := range messages {
-		if err := usecase.Forward(ctx, message); err != nil {
+		if err := usecase.Forward(ctx, *message); err != nil {
 			log.Error().Err(err).Msg("failed to forward message")
 		}
 	}

@@ -1,6 +1,7 @@
 package application
 
 import (
+	"anyker/config"
 	"anyker/internal/domain"
 	"anyker/internal/domain/mocks"
 	"context"
@@ -12,10 +13,11 @@ import (
 
 func TestMessageUsecase_Forward(t *testing.T) {
 	mockForwardRepo := new(mocks.MockForwardRepository)
-	usecase := NewMessageService(mockForwardRepo, nil)
+	cfg := config.Config{} // o inicializa con valores específicos si es necesario
+	usecase := NewMessageService(cfg, mockForwardRepo, nil)
 
 	ctx := context.Background()
-	msg := &domain.Message{Content: []byte("hello")}
+	msg := domain.Message{Content: []byte("hello")}
 
 	t.Run("success", func(t *testing.T) {
 		mockForwardRepo.On("Forward", ctx, msg).Return(nil).Once()
@@ -40,7 +42,8 @@ func TestMessageUsecase_Forward(t *testing.T) {
 
 func TestMessageUsecase_Consume(t *testing.T) {
 	mockConsumerRepo := new(mocks.MockConsumerRepository)
-	usecase := NewMessageService(nil, mockConsumerRepo)
+	cfg := config.Config{} // o inicializa con valores específicos si es necesario
+	usecase := NewMessageService(cfg, nil, mockConsumerRepo)
 
 	ctx := context.Background()
 
@@ -67,7 +70,8 @@ func TestMessageUsecase_Consume(t *testing.T) {
 
 func TestMessageUsecase_Close(t *testing.T) {
 	mockConsumerRepo := new(mocks.MockConsumerRepository)
-	usecase := NewMessageService(nil, mockConsumerRepo)
+	cfg := config.Config{} // o inicializa con valores específicos si es necesario
+	usecase := NewMessageService(cfg, nil, mockConsumerRepo)
 
 	t.Run("success", func(t *testing.T) {
 		mockConsumerRepo.On("Close").Return(nil).Once()

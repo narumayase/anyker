@@ -41,6 +41,7 @@ func Load() Config {
 		NanobotName:       getEnv("NANOBOT_NAME", "anyker-nanobot-1"),
 		LogLevel:          getEnv("LOG_LEVEL", "info"),
 		HTTPClientTimeout: time.Duration(getEnvInt("HTTP_CLIENT_TIMEOUT_SECONDS", 30)) * time.Second,
+		Origin:            getEnv("ORIGIN", "telegram"),
 	}
 }
 

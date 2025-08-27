@@ -18,7 +18,7 @@ func TestForwardRepositoryImpl_Forward(t *testing.T) {
 	repo := NewForwardRepository(cfg, mockHTTPClient)
 
 	ctx := context.Background()
-	msg := &domain.Message{Content: []byte(`{"key":"value"}`)}
+	msg := domain.Message{Content: []byte(`{"key":"value"}`)}
 
 	t.Run("success", func(t *testing.T) {
 		mockResponse := clientmocks.CreateMockResponse(http.StatusOK, `{"status":"ok"}`)

@@ -17,9 +17,9 @@ type MessageUsecase struct {
 
 // NewMessageService creates a new MessageUsecase with the given repositories.
 func NewMessageService(
+	config config.Config,
 	forwardRepository domain.ForwardRepository,
-	consumerRepository domain.ConsumerRepository,
-	config config.Config) domain.MessageUseCase {
+	consumerRepository domain.ConsumerRepository) domain.MessageUseCase {
 	return &MessageUsecase{
 		forwardRepository:  forwardRepository,
 		consumerRepository: consumerRepository,

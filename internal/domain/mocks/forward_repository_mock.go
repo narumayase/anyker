@@ -10,7 +10,7 @@ type MockForwardRepository struct {
 	mock.Mock
 }
 
-func (m *MockForwardRepository) Forward(ctx context.Context, message *domain.Message) error {
+func (m *MockForwardRepository) Forward(ctx context.Context, message domain.Message) error {
 	args := m.Called(ctx, message)
 	return args.Error(0)
 }

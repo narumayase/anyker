@@ -31,7 +31,7 @@ func main() {
 	}
 
 	// Create use case
-	messageService := application.NewMessageService(forwardRepository, consumerRepository)
+	messageService := application.NewMessageService(cfg, forwardRepository, consumerRepository)
 
 	cmd.Run(messageService)
 }
