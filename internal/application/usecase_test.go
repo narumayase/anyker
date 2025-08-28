@@ -11,7 +11,6 @@ import (
 	"testing"
 )
 
-// Tests existentes...
 func TestMessageUsecase_Forward(t *testing.T) {
 	mockForwardRepo := new(mocks.MockForwardRepository)
 	cfg := config.Config{} // or initialize with specific values if necessary
@@ -40,8 +39,6 @@ func TestMessageUsecase_Forward(t *testing.T) {
 		mockForwardRepo.AssertExpectations(t)
 	})
 }
-
-// TESTS ADICIONALES PARA COMPLETAR LA COBERTURA
 
 func TestMessageUsecase_Forward_OriginFiltering(t *testing.T) {
 	mockForwardRepo := new(mocks.MockForwardRepository)
@@ -90,12 +87,12 @@ func TestMessageUsecase_Forward_OriginFiltering(t *testing.T) {
 			Content: []byte("test message"),
 		}
 
-		// No debería llamar a Forward porque el origin no coincide
-		// mockForwardRepo no tiene expectations, así que si se llama fallará
+		// Should not call Forward because origin doesn't match
+		// mockForwardRepo has no expectations, so if called it will fail
 
 		err := usecase.Forward(ctx, msg)
 
-		assert.NoError(t, err) // No error, pero tampoco se forwarded
+		assert.NoError(t, err) // No error, but also not forwarded
 		mockForwardRepo.AssertExpectations(t)
 	})
 
@@ -188,14 +185,14 @@ func TestMessageUsecase_NewMessageService(t *testing.T) {
 
 	assert.NotNil(t, usecase)
 
-	// Verificar que implementa la interfaz
+	// Verify that it implements the interface
 	var _ domain.MessageUseCase = usecase
 
-	// Verificar que es del tipo correcto
+	// Verify that it's the correct type
 	concreteUsecase, ok := usecase.(*MessageUsecase)
 	assert.True(t, ok)
 
-	// Verificar que los campos se asignaron correctamente
+	// Verify that fields were assigned correctly
 	assert.Equal(t, cfg, concreteUsecase.config)
 	assert.Equal(t, mockForwardRepo, concreteUsecase.forwardRepository)
 	assert.Equal(t, mockConsumerRepo, concreteUsecase.consumerRepository)
@@ -278,7 +275,7 @@ func TestMessageUsecase_Close(t *testing.T) {
 	})
 }
 
-// Test de integración que verifica el flujo completo
+// Integration test that verifies the complete flow
 func TestMessageUsecase_Integration(t *testing.T) {
 	mockForwardRepo := new(mocks.MockForwardRepository)
 	mockConsumerRepo := new(mocks.MockConsumerRepository)
@@ -288,13 +285,13 @@ func TestMessageUsecase_Integration(t *testing.T) {
 	ctx := context.Background()
 
 	t.Run("complete workflow", func(t *testing.T) {
-		// Configurar mocks para un flujo completo
+		// Setup mocks for a complete flow
 		messages := make(chan *domain.Message, 1)
 
 		// Mock consume
 		mockConsumerRepo.On("Consume", ctx, mock.AnythingOfType("chan<- *domain.Message")).Return(nil)
 
-		// Mock forward para mensaje que debería procesarse
+		// Mock forward for message that should be processed
 		msg := domain.Message{
 			Key:     "test-service:user-123",
 			Content: []byte("test content"),
@@ -304,15 +301,15 @@ func TestMessageUsecase_Integration(t *testing.T) {
 		// Mock close
 		mockConsumerRepo.On("Close").Return(nil)
 
-		// Ejecutar consume
+		// Execute consume
 		err := usecase.Consume(ctx, messages)
 		assert.NoError(t, err)
 
-		// Ejecutar forward
+		// Execute forward
 		err = usecase.Forward(ctx, msg)
 		assert.NoError(t, err)
 
-		// Ejecutar close
+		// Execute close
 		err = usecase.Close()
 		assert.NoError(t, err)
 
@@ -321,7 +318,7 @@ func TestMessageUsecase_Integration(t *testing.T) {
 	})
 }
 
-// Benchmarks para medir performance
+// Benchmarks to measure performance
 func BenchmarkMessageUsecase_getOriginAndRoutingID(b *testing.B) {
 	usecase := &MessageUsecase{}
 
