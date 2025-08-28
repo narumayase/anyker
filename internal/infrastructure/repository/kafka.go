@@ -5,6 +5,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/rs/zerolog/log"
 	"time"
 
 	"anyker/internal/domain"
@@ -73,6 +74,10 @@ func (c *Consumer) Consume(ctx context.Context, messages chan<- *domain.Message)
 					headers[h.Key] = h.Value
 				}
 			}
+			log.Debug().Msgf("headers receive from Kafka message %v", headers)
+			log.Debug().Msgf("key receive from Kafka message %v", string(msg.Key))
+			log.Debug().Msgf("payload receive from Kafka message %v", msg.Value)
+
 			messages <- &domain.Message{
 				Content: msg.Value,
 				Headers: headers,

@@ -30,6 +30,7 @@ func NewForwardRepository(
 func (f *ForwardRepositoryImpl) Forward(ctx context.Context, message domain.Message) error {
 	headers := map[string]string{
 		"X-Correlation-ID": string(message.Headers["correlation_id"]),
+		"X-Routing-ID":     message.Key,
 	}
 	resp, err := f.httpClient.Post(ctx, headers, message.Content, f.config.APIEndpoint)
 	if err != nil {

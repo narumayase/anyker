@@ -52,6 +52,8 @@ func (c *HttpClientImpl) Post(ctx context.Context, headers map[string]string, pa
 		// Set headers
 		req.Header.Set(key, value)
 	}
+	log.Debug().Msgf("headers: to send to %s %+v", url, req.Header)
+
 	req.Header.Set("Authorization", "Bearer "+c.bearerToken)
 	req.Header.Set("Content-Type", "application/json")
 

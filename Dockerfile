@@ -1,6 +1,12 @@
-# Etapa 1: build
-FROM golang:1.22-alpine AS builder
-RUN apk add --no-cache git
+# anyker/Dockerfile
+FROM golang:1.24-bullseye AS builder
+
+RUN apt-get update && apt-get install -y \
+    git \
+    pkg-config \
+    librdkafka-dev \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
@@ -10,11 +16,10 @@ RUN go mod download
 COPY . .
 RUN go build -o anyker .
 
-# Etapa 2: imagen final
-FROM alpine:latest
+FROM debian:bullseye-slim
 WORKDIR /app
-
 COPY --from=builder /app/anyker .
 
-EXPOSE 8082
+RUN apt-get update && apt-get install -y librdkafka1 && rm -rf /var/lib/apt/lists/*
+
 CMD ["./anyker"]
