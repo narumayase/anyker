@@ -31,8 +31,8 @@ func NewConsumer(config config.Config) (domain.ConsumerRepository, error) {
 		"bootstrap.servers": config.KafkaBroker,
 		"group.id":          config.KafkaGroupID,
 		"auto.offset.reset": "latest",
-		// latest para ignorar los mensajes viejos, earliest para lo contrario
-		// TODO parametrizar el offset
+		// latest to ignore old messages, earliest for the opposite
+		// TODO parameterize the offset
 	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to create consumer: %w", err)

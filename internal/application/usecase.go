@@ -51,7 +51,8 @@ func (u *MessageUsecase) Close() error {
 	return u.consumerRepository.Close()
 }
 
-// getOriginAndRoutingID
+// getOriginAndRoutingID extracts the origin and routing ID from a given key.
+// If the key does not contain a colon, the entire key is treated as the origin, and routingId remains empty.
 func (u *MessageUsecase) getOriginAndRoutingID(key string) (origin string, routingId string) {
 	keyParts := strings.SplitN(key, ":", 2)
 
@@ -59,7 +60,7 @@ func (u *MessageUsecase) getOriginAndRoutingID(key string) (origin string, routi
 		origin = keyParts[0]
 		routingId = keyParts[1]
 	} else {
-		// toda la key la tomamos como origin, userID queda vacío
+		// the entire key is taken as origin, userID remains empty
 		origin = keyParts[0]
 	}
 	return

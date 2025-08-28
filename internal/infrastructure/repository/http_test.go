@@ -57,7 +57,7 @@ func TestForwardRepositoryImpl_Forward(t *testing.T) {
 		correlationID := "test-correlation-id"
 		msgWithHeader := domain.Message{
 			Content: []byte(`{"key":"value"}`),
-			Headers: map[string][]byte{"correlation_id": []byte(correlationID)},
+			Headers: map[string]string{"correlation_id": correlationID},
 		}
 		mockResponse := clientmocks.CreateMockResponse(http.StatusOK, `{"status":"ok"}`)
 		mockHTTPClient.On("Post", ctx, mock.MatchedBy(func(h map[string]string) bool { return h["X-Correlation-ID"] == correlationID }), msgWithHeader.Content, cfg.APIEndpoint).Return(mockResponse, nil).Once()

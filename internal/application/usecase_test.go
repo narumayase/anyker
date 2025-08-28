@@ -13,7 +13,7 @@ import (
 
 func TestMessageUsecase_Forward(t *testing.T) {
 	mockForwardRepo := new(mocks.MockForwardRepository)
-	cfg := config.Config{} // o inicializa con valores específicos si es necesario
+	cfg := config.Config{} // or initialize with specific values if necessary
 	usecase := NewMessageService(cfg, mockForwardRepo, nil)
 
 	ctx := context.Background()
@@ -42,7 +42,7 @@ func TestMessageUsecase_Forward(t *testing.T) {
 
 func TestMessageUsecase_Consume(t *testing.T) {
 	mockConsumerRepo := new(mocks.MockConsumerRepository)
-	cfg := config.Config{} // o inicializa con valores específicos si es necesario
+	cfg := config.Config{} // or initialize with specific values if necessary
 	usecase := NewMessageService(cfg, nil, mockConsumerRepo)
 
 	ctx := context.Background()
@@ -70,7 +70,7 @@ func TestMessageUsecase_Consume(t *testing.T) {
 
 func TestMessageUsecase_Close(t *testing.T) {
 	mockConsumerRepo := new(mocks.MockConsumerRepository)
-	cfg := config.Config{} // o inicializa con valores específicos si es necesario
+	cfg := config.Config{} // or initialize with specific values if necessary
 	usecase := NewMessageService(cfg, nil, mockConsumerRepo)
 
 	t.Run("success", func(t *testing.T) {
